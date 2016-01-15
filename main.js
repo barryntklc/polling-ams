@@ -23,11 +23,10 @@ Items = new Mongo.Collection("items");
  * TODO add embed facebook/etc comment boxes
  */
 
-Meteor.methods({
-});
+Meteor.methods({});
 
 if (Meteor.isServer) {
-    Accounts.onCreateUser(function(options, user) {
+    Accounts.onCreateUser(function (options, user) {
 
         var x = Meteor.users.find().count();
 
@@ -69,24 +68,43 @@ if (Meteor.isServer) {
                 }
             }
         },
-        /*
-        isSelected: function (user, item_id) {
-            if (user === null) {
-                return false;
-            } else {
-                //if user is in this
-                //console.log(item_id);
-
-                var index = Items.findOne({_id: item_id}).votes.indexOf(user);
-                if (index != -1) {
-                    return true;
-                } else {
-                    return false;
-                }
+        clickItem: function (user_id, item_id) {
+            if (!Meteor.userId()) {
+                throw new Meteor.Error("not-authorized");
             }
-        },*/
+
+            //console.log("user_id: " + user_id);
+            //console.log("item_id: " + item_id);
+            /*
+             var retrieved_item = Items.findOne({_id: item_id});
+             if (retrieved_item === undefined) {
+             var item = {
+             text: text,
+             createdAt: new Date(),
+             votes: [],
+             created: Meteor.user().username
+             };
+
+             item.votes.push(user_id);
+             Items.insert(item);
+             } else {*/
+            var retrieved_item = Items.findOne({_id: item_id});
+            if (Items.findOne({_id: retrieved_item._id}).votes.indexOf(user_id) === -1) {
+                Items.update(
+                    {_id: retrieved_item._id},
+                    {$push: {votes: user_id}}
+                );
+            } else {
+                Items.update(
+                    {_id: retrieved_item._id},
+                    {$pull: {votes: user_id}}
+                );
+            }
+            /*
+             }*/
+        },
         addItem: function (text, id) {
-            if (! Meteor.userId()) {
+            if (!Meteor.userId()) {
                 throw new Meteor.Error("not-authorized");
             }
 
@@ -104,13 +122,13 @@ if (Meteor.isServer) {
             } else {
                 if (Items.findOne({_id: retrieved_item._id}).votes.indexOf(id) === -1) {
                     Items.update(
-                        { _id: retrieved_item._id },
-                        { $push: { votes: id }}
+                        {_id: retrieved_item._id},
+                        {$push: {votes: id}}
                     );
                 } else {
                     Items.update(
-                        { _id: retrieved_item._id },
-                        { $pull: { votes: id }}
+                        {_id: retrieved_item._id},
+                        {$pull: {votes: id}}
                     );
                 }
             }
@@ -118,7 +136,7 @@ if (Meteor.isServer) {
         deleteItem: function (taskId) {
             var task = Items.findOne(taskId);
 
-            if (! Meteor.userId()) {
+            if (!Meteor.userId()) {
                 throw new Meteor.Error("not-authorized");
             }
             Items.remove(taskId);
@@ -135,9 +153,9 @@ if (!Meteor.isClient) {
             return Items.find({}, {sort: {votes: -1}}); //TODO WHY doesn't this sort properly?
             //return Items.find().order("votes.length").asList();
         },
-        admin: function() {
+        admin: function () {
 
-            Meteor.call("isAdmin", Meteor.userId(), function(error, data) {
+            Meteor.call("isAdmin", Meteor.userId(), function (error, data) {
                 if (error) {
                     console.log(error);
                 }
@@ -162,8 +180,8 @@ if (!Meteor.isClient) {
         isOwner: function () {
             return this.owner === Meteor.userId();
         },
-        admin: function() {
-            Meteor.call("isAdmin", Meteor.userId(), function(error, data) {
+        admin: function () {
+            Meteor.call("isAdmin", Meteor.userId(), function (error, data) {
                 if (error) {
                     console.log(error);
                 }
@@ -172,29 +190,29 @@ if (!Meteor.isClient) {
             return Session.get('admin_status');
         },
         //selected: function() {
-            /*
-            Meteor.call("isSelected", Meteor.userId(), this._id, function(error, data) {
-                if (error) {
-                    console.log(error);
-                }
-                Session.set('selected_status', data);
-            });
-            return Session.get('selected_status');*/
+        /*
+         Meteor.call("isSelected", Meteor.userId(), this._id, function(error, data) {
+         if (error) {
+         console.log(error);
+         }
+         Session.set('selected_status', data);
+         });
+         return Session.get('selected_status');*/
         //}
     });
     Template.task.events({
         "click .delete": function () {
             Meteor.call("deleteItem", this._id);
         },
-        /*"click .item": function() {
-            Meteor.call("isSelected", Meteor.userId(), this._id, function(error, data) {
+        "click .item": function () {
+            Meteor.call("clickItem", Meteor.userId(), this._id, function (error, data) {
                 if (error) {
                     console.log(error);
                 }
                 Session.set('selected_status', data);
             });
             return Session.get('selected_status');
-        }*/
+        }
     });
 
     Accounts.ui.config({

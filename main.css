@@ -100,7 +100,7 @@ li.item {
 }
 
 li.item:hover {
-    background-color: #eeeeee;
+    background-color: grey;
 }
 
 li.item .text {
