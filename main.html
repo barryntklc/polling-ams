@@ -1,0 +1,74 @@
+<head>
+    <title>AMS Spring 2016 Showing Poll</title>
+</head>
+
+<body>
+<div class="container">
+    <header>
+        <h1>
+            <div class="header">AMS Spring 2016 Showing Poll</div> {{#if admin}}<div id="admin-logo">(ADMIN)</div>{{/if}}
+            {{> loginButtons}}{{#unless currentUser}}to vote!{{/unless}}
+        </h1>
+
+        <p>Happy New Year, and welcome back. It's time to pick your Spring 2016 nominations! As usual, please include a
+            showcase video along with your nomination in the comments. The shows with four votes or more will make it to
+            show voting!
+            <br>
+            <br>
+            RULES:
+        <ul>
+            <li class="normal">No "reruns" (watched in the past 2 years).</li>
+            <li class="normal">No H</li>
+        </ul>
+
+        NEW RULES:
+        <ul>
+            <li class="normal">One of our showings can be continued from last semester. We will watch up to the end of
+                the second season
+                of this show, if present.
+            </li>
+            <li class="normal">Shows less than 20 mins are OK!</li>
+        </ul>
+        </p>
+
+        {{#if currentUser}}
+            <form class="new-task">
+                <input type="text" name="text" placeholder="Add a show"/>
+            </form>
+        {{/if}}
+    </header>
+
+    <ul class="items">
+        {{#each tasks}}
+            {{> task}}
+        {{/each}}
+    </ul>
+</div>
+</body>
+
+<template name="task">
+    <!--<li class="{{#if checked}}checked{{/if}} {{#if private}}private{{/if}}">-->
+    <li class="item {{#if selected}}selected{{/if}}">
+        {{#if currentUser }}
+            {{#if admin}}
+                <button class="delete">&times;</button>
+            {{/if}}
+        {{/if}}
+        <!--TODO add function: if current user is admin, add delete button-->
+
+        <!--<input type="checkbox" checked="{{checked}}" class="toggle-checked"/>
+
+        {{#if isOwner}}
+            <button class="toggle-private">
+                {{#if private}}
+                    Private
+                {{else}}
+                    Public
+                {{/if}}
+            </button>
+        {{/if}}-->
+
+        <span class="text">{{text}}</span>
+        <span class="votes">{{votes.length}} votes</span>
+    </li>
+</template>
