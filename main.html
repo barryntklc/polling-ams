@@ -1,5 +1,15 @@
 <head>
     <title>AMS Spring 2016 Showing Poll</title>
+
+    <!--
+    <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=566600983494462";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+    -->
 </head>
 
 <body>
@@ -33,7 +43,7 @@
 
         {{#if currentUser}}
             <form class="new-task">
-                <input type="text" name="text" placeholder="Add a show"/>
+                <input type="text" name="text" placeholder="Add a show, or click one to add your vote"/>
             </form>
         {{/if}}
     </header>
@@ -44,6 +54,9 @@
         {{/each}}
     </ul>
 </div>
+
+<!--<div id="fb-root"></div>-->
+
 </body>
 
 <template name="task">
